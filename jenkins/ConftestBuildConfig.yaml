@@ -1,0 +1,33 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: jenkins-agent-conftest
+  labels:
+    role: jenkins-slave
+spec: {}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: conftest-docker-build
+  namespace: jenkins
+  labels:
+    name: docker-build
+spec:
+  source:
+    type: Git
+    contextDir: 'jenkins-agents/jenkins-agent-conftest'
+    git:
+      uri: 'https://github.com/redhat-cop/containers-quickstarts.git'
+      ref: 'master'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'jenkins-agent-python:v1.0'
+        namespace: jenkins
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'jenkins-agent-conftest:latest'

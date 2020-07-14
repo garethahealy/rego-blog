@@ -1,0 +1,11 @@
+node ("jenkins-agent-conftest") {
+    stage("Clone blog") {
+        sh "git clone https://github.com/garethahealy/rego-blog.git"
+    }
+
+    stage("Run conftest") {
+        dir("rego-blog") {
+            sh "bats test/conftest-tests.sh"
+        }
+    }
+}

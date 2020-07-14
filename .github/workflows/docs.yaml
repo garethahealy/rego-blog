@@ -1,0 +1,23 @@
+name: Generate README.html
+
+on: [push, pull_request]
+
+jobs:
+  doc_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Link checker
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+
+      - name: Content checker
+        uses: errata-ai/vale-action@v1.2.0
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - uses: docker://pandoc/core:2.9
+        with:
+          args: -o README.html README.md
+
