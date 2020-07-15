@@ -1,0 +1,12 @@
+podTemplate(label: 'conftest-agent', cloud: 'openshift', serviceAccount: 'jenkins', containers: [
+        containerTemplate(name: 'jnlp', image: 'image-registry.openshift-image-registry.svc:5000/jenkins/jenkins-agent-conftest', privileged: false, alwaysPullImage: true, args: '${computer.jnlpmac} ${computer.name}', ttyEnabled: false)
+]) {
+    node ('conftest-agent') {
+        stage('Run conftest') {
+            sh "git clone https://github.com/garethahealy/rego-blog.git"
+            dir("rego-blog") {
+                sh "bats test/conftest-tests.sh"
+            }
+        }
+    }
+}
