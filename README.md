@@ -1,17 +1,17 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)]()
 
-# Using the Open Policy Agent (OPA) toolset to left-shift your companies best practices and policies
+# Using the Open Policy Agent (OPA) toolset to left-shift your company's best practices and policies
 This blog post aims to explain the basics around OPA and how the Red Hat [Containers Community of Practice](https://github.com/redhat-cop) (CoP)
 has started to implement policies using the toolset.
 
 As part of the Red Hat [UK&I Professional Services](https://www.redhat.com/en/services/consulting) team, I work with customers
-who are in the process of on-boarding their applications onto [OpenShift Container Platform (OCP)](https://developers.redhat.com/products/openshift/overview/).
+who are in the process of onboarding their applications onto [OpenShift Container Platform (OCP)](https://developers.redhat.com/products/openshift/overview/).
 One question customers typically ask is:
-_"How do I stop an application team deploying from latest? or using requests and limits which are disruptive to the platform?"_
+_"How do I stop an application team deploying from latest? Or using requests and limits which are disruptive to the platform?"_
 
-Previously, I would have suggested building a process around their CI/CD pipelines to validate the k8s resources and based on company policy; 
+Previously, I would have suggested building a process around their CI/CD pipelines to validate the k8s resources and, based on company policy, 
 allow or deny the release. Although this works for most situations, it has one major flaw.
-It is not natively built into or on top of k8s which allows teams to by-pass the policy if they are not mandated or 
+It is not natively built into or on top of k8s, which allows teams to bypass policies if they are not mandated, or 
 by manually changing the released resources via `oc` or the web console.
 This type of implementation always has aspects of _"security through obscurity"_ which is doomed to fail.
 
@@ -26,14 +26,14 @@ Straight from the horse's mouth:
 > OPA provides a high-level declarative language that lets you specify policy as code and simple APIs to offload policy decision-making from your software. 
 > You can use OPA to enforce policies in microservices, Kubernetes, CI/CD pipelines, API gateways, and more.
 
-In simple terms; it is a framework which allows you to build rules for your k8s resources to allow or deny. For example:
+In simple terms, it is a framework which allows you to build rules for your k8s resources to allow or deny. For example:
 - Don't want to allow users to set CPU limits?
 - Want to force all deployment resources to have certain labels?
-- Want to force all deployments to have a matching `PodDisruptionBudget`
+- Want to force all deployments to have a matching `PodDisruptionBudget`?
 
-All of these scenarios are easily implementable via OPAs policy language; `rego` (pronounced "ray-go").
+All of these scenarios are easily implementable via OPA's policy language: `rego` (pronounced "ray-go").
 
-## If OPA is a framework; how do I use it?
+## If OPA is a framework, how do I use it?
 OPA gives you the policy engine but to build a full solution that works off-cluster and on-cluster, it is best combined with the following complimentary tooling:
 - OPA conftest
 - OPA Gatekeeper
@@ -42,12 +42,12 @@ OPA gives you the policy engine but to build a full solution that works off-clus
 ### OPA conftest
 [conftest](https://github.com/open-policy-agent/conftest) is a golang CLI which is part of the OPA project. 
 It allows you to execute OPA policies against a YAML/JSON dataset. It is a great fit to be executed as part of your CI/CD pipeline to left-shift
-your companies policies. Instead of waiting for your developers to deploy the resources and discover they are not compliant,
+your company's policies. Instead of waiting for your developers to deploy the resources and discover they are not compliant,
 allow them to validate the resources as part of their current development sprint.
 
 ### OPA Gatekeeper
-[Gatekeeper](https://github.com/open-policy-agent/gatekeeper) is a set of `Pods` which work via a [admission controller webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
-which enables your policies to be natively part of your cluster within the `oc create` and `oc update` lifecycle.
+[Gatekeeper](https://github.com/open-policy-agent/gatekeeper) is a set of `Pods` which work via a [admission controller webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/),
+this enables your policies to be natively part of your cluster within the `oc create` and `oc update` lifecycle.
 Gatekeeper can audit cluster resources which were created before the policy, enabling them to be retrospectively fixed.
 
 ### konstraint
@@ -124,13 +124,13 @@ Constraints are the CRDs used by Gatekeeper to store your policies on-cluster.
 65  }
 ```
 
-The above might not look simple, but it is. The important thing to remember is that the above policy is targeting both `Gatekeeper` and `conftest`
+The above might not look simple, but it is. The important thing to remember is that the policy is targeting both `Gatekeeper` and `conftest`
 which is why it might look complicated. Firstly a quick overview:
 - _line 1 to 53_: are helper methods pulled from [konstraint lib.](https://github.com/plexsystems/konstraint/tree/main/examples/lib)
 - _line 57 to 65_: is the actual rego policy block.
 
-Let's go line, byline and explain what each bit is doing:
-- _line 5_: `is_gatekeeper`: is a rule which checks whether the policy is being run on Gatekeeper, which allows our policies to target non-Gatekeeper environments, such as conftest
+Let's go line-by-line and explain what each bit is doing:
+- _line 5_: `is_gatekeeper`: is a rule which checks whether the policy is being run on Gatekeeper, which allows our policies to target non-Gatekeeper environments, such as conftest.
 - _line 14 and 18_: `object`: is a _"factored out"_ variable, which allows for an `OR`. In simple terms, if `is_gatekeeper` is true, `object = input.review.object` else `object = input`.
 - _line 22 and 24_: `name/kind`: set two helper variables.
 - _line 26_: `is_deployment`: is a rule to check if the kind we are working on, is a deployment.
@@ -161,20 +161,20 @@ You can execute the above policy by running the below. _NOTE_: A user with clust
 git clone https://github.com/garethahealy/rego-blog.git
 cd rego-blog
 
-echo "Lets have a look at the test data.."
+echo "Let's have a look at the test data.."
 cat policy/container-image-latest/test_data/unit/list.yml
 
-echo "Now, lets run the conftest tests locally against that data.."
+echo "Now, let's run the conftest tests locally against that data.."
 bats test/conftest-tests.sh
 
 echo "Cool. Everything works as expected locally. But what about on-cluster?"
-echo "Now, lets deploy gatekeeper (cluster-admin permissions required with a valid session)..."
+echo "Now, let's deploy gatekeeper (cluster-admin permissions required with a valid session)..."
 test/deploy-gatekeeper.sh deploy_gatekeeper
 
-echo "Now, lets deploy the gatekeeper contraints..."
+echo "Now, let's deploy the gatekeeper contraints..."
 test/deploy-gatekeeper.sh deploy_constraints
 
-echo "Finally, lets check the policy is active for our namespace..."
+echo "Finally, let's check the policy is active for our namespace..."
 bats test/gatekeeper-tests.sh
 ```
 
@@ -187,7 +187,7 @@ If you are feeling lazy and love asci-cinema:
 ## OK, But how do I fit that into my CI/CD pipeline?
 **TODO: this section feels a bit light, ideas?...**
 
-The title of this blog mentions how to `left-shift` your companies policies. So let's do that:
+The title of this blog mentions how to `left-shift` your company's policies. So let's do that:
 
 Firstly, we need to build a Jenkins agent which can execute conftest in our `jenkins` project:
 ```bash
@@ -217,10 +217,10 @@ The idea here is that we would integrate the conftest stage as part of our appli
 Hopefully, you've seen the power of rego policies which are executed locally via conftest and on-cluster via Gatekeeper.
 
 All the above work has been part of Red Hat Containers Community of Practice (CoP). The aim has been to:
-- Understand the basics of writing rego policies 
-- Learn what is and not possible
-- What the toolset is and how it can be used
-- Start to build out a set of policies OCP users can use "off the shelf"
+- Understand the basics of writing rego policies. 
+- Learn what is and is not possible.
+- What the toolset is and how it can be used.
+- Start to build out a set of policies OCP users can use "off-the-shelf".
 
 We've made a good start on the last point but are always interested in what other OPA users are implementing.
 If you are interested in contributing or seeing the policies we've implemented, check out:
