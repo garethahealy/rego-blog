@@ -2,12 +2,12 @@
 
 # Using the Open Policy Agent (OPA) toolset to left-shift your companies best practices and policies
 This blog post aims to explain the basics around OPA and how the Red Hat [Containers Community of Practice](https://github.com/redhat-cop) (CoP)
-has started to implement policies using the toolset.
+has started to implement a collecion of policies using the toolset.
 
-As part of the Red Hat [UK&I Professional Services](https://www.redhat.com/en/services/consulting) team, I work with customers
+As a member of the Red Hat [UK&I Consulting](https://www.redhat.com/en/services/consulting) team, I work with customers
 who are in the process of on-boarding their applications onto [OpenShift Container Platform (OCP)](https://developers.redhat.com/products/openshift/overview/).
-One question customers typically ask is:
-_"How do I stop an application team deploying from latest? or using requests and limits which are disruptive to the platform?"_
+One type of question customers typically ask is:
+_"How do I stop an application team deploying images with the latest tag? or using requests and limits which are disruptive to the platform?"_
 
 Previously, I would have suggested building a process around their CI/CD pipelines to validate the k8s resources and based on company policy; 
 allow or deny the release. Although this works for most situations, it has one major flaw.
@@ -20,38 +20,39 @@ So what do I think the answer could be? [OPA](https://www.openpolicyagent.org)[*
 ## What is OPA?
 > https://github.com/open-policy-agent
 
-Straight from the horse's mouth:
+From the website:
 
 > The Open Policy Agent (OPA, pronounced "oh-pa") is an open-source, general-purpose policy engine that unifies policy enforcement across the stack. 
 > OPA provides a high-level declarative language that lets you specify policy as code and simple APIs to offload policy decision-making from your software. 
 > You can use OPA to enforce policies in microservices, Kubernetes, CI/CD pipelines, API gateways, and more.
 
-In simple terms; it is a framework which allows you to build rules for your k8s resources to allow or deny. For example:
-- Don't want to allow users to set CPU limits?
-- Want to force all deployment resources to have certain labels?
-- Want to force all deployments to have a matching `PodDisruptionBudget`
+In simple terms; it is a framework which allows you to build rules for your k8s resources to allow or deny the resource to be applied to a cluster. 
+For example imagine you need to:
+- Prevent user from setting CPU limits?
+- Force all deployment resources to have certain labels?
+- Force all deployments to have a matching `PodDisruptionBudget`
 
-All of these scenarios are easily implementable via OPAs policy language; `rego` (pronounced "ray-go").
+All of these scenarios are easily implementable via OPA and it's policy language; `rego` (pronounced "ray-go").
 
 ## If OPA is a framework; how do I use it?
-OPA gives you the policy engine but to build a full solution that works off-cluster and on-cluster, it is best combined with the following complimentary tooling:
-- OPA conftest
+OPA gives you the policy engine but to build a full solution that works on and off-cluster, it's best to combine OPA with the following complimentary tooling:
+- OPA Conftest
 - OPA Gatekeeper
 - konstraint
 
-### OPA conftest
-[conftest](https://github.com/open-policy-agent/conftest) is a golang CLI which is part of the OPA project. 
-It allows you to execute OPA policies against a YAML/JSON dataset. It is a great fit to be executed as part of your CI/CD pipeline to left-shift
-your companies policies. Instead of waiting for your developers to deploy the resources and discover they are not compliant,
-allow them to validate the resources as part of their current development sprint.
+### OPA Conftest
+[Conftest](https://github.com/open-policy-agent/conftest) is a golang-based CLI which is part of the OPA project. 
+It allows you to execute OPA policies against a YAML/JSON dataset. It is a great addition to a CI/CD pipeline to shift-left compliance testing against
+your companies policies. Instead of waiting for developers to deploy the resources and discover they are not compliant,
+Conftest allow them to validate the resources as part of their SDLC.
 
 ### OPA Gatekeeper
-[Gatekeeper](https://github.com/open-policy-agent/gatekeeper) is a set of `Pods` which work via a [admission controller webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
+[Gatekeeper](https://github.com/open-policy-agent/gatekeeper) is a set of `Pods` which work via a k8s [admission controller webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
 which enables your policies to be natively part of your cluster within the `oc create` and `oc update` lifecycle.
 Gatekeeper can audit cluster resources which were created before the policy, enabling them to be retrospectively fixed.
 
 ### konstraint
-[konstraint](https://github.com/plexsystems/konstraint) is a golang CLI which is used to generate `ConstraintTemplate` and `Constraint`.
+[konstraint](https://github.com/plexsystems/konstraint) is a golang-based CLI which is used to generate `ConstraintTemplate` and `Constraint`.
 Constraints are the CRDs used by Gatekeeper to store your policies on-cluster.
 
 ## OK, let's take a look at a simple policy
@@ -125,7 +126,9 @@ Constraints are the CRDs used by Gatekeeper to store your policies on-cluster.
 ```
 
 The above might not look simple, but it is. The important thing to remember is that the above policy is targeting both `Gatekeeper` and `conftest`
-which is why it might look complicated. Firstly a quick overview:
+which is why it might look complicated. 
+
+Firstly a quick overview:
 - _line 1 to 53_: are helper methods pulled from [konstraint lib.](https://github.com/plexsystems/konstraint/tree/main/examples/lib)
 - _line 57 to 65_: is the actual rego policy block.
 
@@ -155,7 +158,7 @@ To run the above policy, it is expected the following tools are installed:
 - [yq](https://pypi.org/project/yq)
 - [bats-core](https://github.com/bats-core/bats-core#installation)
 
-You can execute the above policy by running the below. _NOTE_: A user with cluster-admin permissions is required to deploy Gatekeeper.
+You can execute the above policy by running the commands below. _NOTE_: A user with cluster-admin permissions is required to deploy Gatekeeper.
 
 ```bash
 git clone https://github.com/garethahealy/rego-blog.git
@@ -228,4 +231,4 @@ If you are interested in contributing or seeing the policies we've implemented, 
 > https://github.com/redhat-cop/rego-policies
 
 ## <a name="DISCLAIMER"></a>DISCLAIMER
-[1] Open Policy Agent is not a Red Hat sponsored project nor is it supported under a Red Hat subscription and is strictly an upstream project.
+[1] Open Policy Agent is an open source project. It is not a Red Hat sponsored nor is it supported under a Red Hat subscription.
