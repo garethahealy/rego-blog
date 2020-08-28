@@ -226,9 +226,8 @@ So what did the above do?
 - You executed `test/deploy-gatekeeper.sh deploy_constraints`; which used `konstraint` to auto-generate the Gatekeeper CRs which were applied to your cluster.
 - You executed `test/gatekeeper-tests.sh`; which used `BATS` to run `oc create` which validated the policy worked as expected on-cluster.
 
-If you are feeling lazy and love asci-cinema:
-
-    _TODOs_
+If you are unable to install the software required, you can use the OPA Playground below which is setup with the policy and data:
+- [https://play.openpolicyagent.org/p/Gu4vP4hJA0](https://play.openpolicyagent.org/p/Gu4vP4hJA0)
 
 ## OK, But how do I fit that into my CI/CD pipeline?
 I've previously mentioned `left-shifting` your companies policies but what does this mean in practical terms for OPA?
