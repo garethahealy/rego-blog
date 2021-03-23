@@ -16,7 +16,7 @@ setup_file() {
 
   print_info "${status}" "${output}" "${cmd}" "${tmp}"
   [ "$status" -eq 1 ]
-  [ "${lines[1]}" = "not ok 1 - ${tmp}/list.yml - Deployment/imageuseslatesttag: container 'bar' is using the latest tag for its image (quay.io/redhat-cop/openshift-applier:latest), which is an anti-pattern." ]
+  [ "${lines[1]}" = "not ok 1 - ${tmp}/list.yml - main - Deployment/imageuseslatesttag: container 'bar' is using the latest tag for its image (quay.io/redhat-cop/openshift-applier:latest), which is an anti-pattern." ]
   [ "${lines[2]}" = "" ]
 }
 

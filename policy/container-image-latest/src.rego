@@ -1,3 +1,6 @@
+# @title Check a Deployment is not using the latest tag for their image
+#
+# @kinds apps/Deployment
 package main
 
 default is_gatekeeper = false
@@ -64,8 +67,6 @@ format(msg) = msg {
   not is_gatekeeper
 }
 
-# @title Check a Deployment is not using the latest tag for their image
-# @kinds apps/Deployment
 violation[msg] {
   is_deployment
 
