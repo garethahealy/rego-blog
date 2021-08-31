@@ -1,12 +1,13 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)]()
 ![Generate README.html](https://github.com/garethahealy/rego-blog/workflows/Generate%20README.html/badge.svg)
+[![GitHub Release Date](https://img.shields.io/github/release-date/garethahealy/rego-blog)](https://cloud.redhat.com/blog/automate-your-security-practices-and-policies-on-openshift-with-open-policy-agent)
 
 # Automate your security practices and policies on OpenShift with Open Policy Agent (OPA)
 This blog post aims to explain the basics around OPA and how the Red Hat [Containers Community of Practice](https://github.com/redhat-cop) (CoP)
 has started to implement a collection of policies using the toolset.
 
 As a member of the Red Hat [UK&I Consulting](https://www.redhat.com/en/services/consulting) team, I work with customers
-who are in the process of onboarding their applications onto [OpenShift Container Platform (OCP)](https://developers.redhat.com/products/openshift/overview/).
+who are in the process of on-boarding their applications onto [OpenShift Container Platform (OCP)](https://developers.redhat.com/products/openshift/overview/).
 One type of question customers typically ask is:
 _"How do I stop an application team deploying images with the latest tag? or using requests and limits which are disruptive to the platform?"_
 
@@ -52,15 +53,15 @@ The first step to using OPA is writing a `HelloWorld` policy which outputs the `
 
 Once we have a policy, we can look at the toolset to execute it. OPA gives you the policy engine but to build a full solution 
 that works on and off-cluster, it's best to combine OPA with the following complementary tooling:
-- OPA Conftest
+- OPA conftest
 - OPA Gatekeeper
 - konstraint
 
-### OPA Conftest
-[Conftest](https://github.com/open-policy-agent/conftest) is a golang-based CLI which is part of the OPA project. 
+### OPA conftest
+[conftest](https://github.com/open-policy-agent/conftest) is a golang-based CLI which is part of the OPA project. 
 It allows you to execute OPA policies against a YAML/JSON dataset. It is a great addition to a CI/CD pipeline to [left-shift](https://www.redhat.com/en/topics/security) compliance testing against
 your companies policies. Instead of waiting for developers to deploy the resources and discover they are not compliant,
-Conftest allow them to validate the resources as part of their Software Development Life Cycle (SDLC).
+conftest allow them to validate the resources as part of their Software Development Life Cycle (SDLC).
 
 ### OPA Gatekeeper
 [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) is a set of `Pods` which work via a Kubernetes [admission controller webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/),
@@ -285,7 +286,7 @@ If you are interested in contributing or seeing the policies we've implemented, 
 Want to start writing policies? Below are some useful links to get you started:
 - [Policy language overview](https://www.openpolicyagent.org/docs/latest/policy-language)
 - [Policy reference](https://www.openpolicyagent.org/docs/latest/policy-reference)
-- [Playground enviroment](https://play.openpolicyagent.org)
+- [Playground environment](https://play.openpolicyagent.org)
 - [Got a question? Head over to their slack](https://slack.openpolicyagent.org)
 
 ## Thanks to...

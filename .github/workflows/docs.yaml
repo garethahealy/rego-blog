@@ -13,7 +13,7 @@ jobs:
         uses: gaurav-nelson/github-action-markdown-link-check@v1
 
       - name: Content checker
-        uses: errata-ai/vale-action@v1.2.0
+        uses: errata-ai/vale-action@v1.4.0
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 

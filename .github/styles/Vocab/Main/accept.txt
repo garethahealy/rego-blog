@@ -1,0 +1,11 @@
+monodot
+noelo
+rego
+Jenkinsfile
+Dockerfile
+namespace
+yq
+jq
+conftest
+konstraint
+toolset
